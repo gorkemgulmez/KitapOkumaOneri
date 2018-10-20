@@ -14,7 +14,7 @@ public class Database {
 
 	public static void setConnection() {
 		String url, username, password;
-		url = "jdbc:mysql://localhost:3306/Kitap?useUnicode=yes&characterEncoding=UTF-8";
+		url = "jdbc:mysql://localhost:3306/kitap?useUnicode=yes&characterEncoding=UTF-8";
 		username = "admin";
 		password = "333ordEMmgH8aJud";
 
