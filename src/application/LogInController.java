@@ -21,7 +21,7 @@ public class LogInController {
 			return;
 		}
 		try {
-			if(true)
+			if(true) //TODO fix true condition
 				Main.sceneRedirect_firstLogIn();
 			else 
 				Main.sceneRedirect_mainWindow();
