@@ -1,4 +1,3 @@
-
 package db;
 
 import java.sql.Connection;
@@ -9,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import javafx.collections.ObservableList;
+import model.BookModel;
 
 public class Database {
     
@@ -37,7 +37,7 @@ public class Database {
         public static void Kitap_Secim() {
 		
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `bx_books` WHERE user=admin AND password=333ordEMmgH8aJud");
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `bx_books` WHERE user=admin AND password=333ordEMmgH8aJud");
 			stmt.setString(1," admin");
 			stmt.setString(2, "333ordEMmgH8aJud");
 			ResultSet rs = stmt.executeQuery();
@@ -109,7 +109,7 @@ public class Database {
 		
 		
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT book_title FROM `bx_books`  WHERE user=admin AND password=333ordEMmgH8aJud ORDER BY `isbn` ASC ");
+            PreparedStatement stmt = connection.prepareStatement("SELECT book_title FROM `bx_books`  WHERE user=admin AND password=333ordEMmgH8aJud ORDER BY `isbn` ASC ");
 			stmt.setString(1," admin");
 			stmt.setString(2, "333ordEMmgH8aJud");
 			ResultSet rs = stmt.executeQuery();
@@ -118,5 +118,22 @@ public class Database {
 			e.printStackTrace();
 		}	
 		
+	}
+	
+	public static void getBookData(ObservableList<BookModel> books) {
+		String sql_order = "SELECT * FROM `bx_books`";
+		books.clear();
+		try {
+			Statement state = connection.createStatement();
+			ResultSet rs = state.executeQuery(sql_order);
+			while (rs.next()) {
+				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"),
+						rs.getString("book_author"), rs.getString("year_of_publication"),
+						rs.getString("publisher"), rs.getString("image_url_s") ));
+			}
+		} catch (SQLException e) {
+			System.out.println("Cannot execute sql order at load products method");
+			// e.printStackTrace();
+}
 	}
 }
