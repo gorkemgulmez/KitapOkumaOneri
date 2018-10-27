@@ -170,8 +170,8 @@ public class Database {
 				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"),
 						rs.getString("book_author"), rs.getString("year_of_publication"),
 						rs.getString("publisher"), rs.getString("image_url_s") ));
-rs.close();
 			}
+			rs.close();
 		} catch (SQLException e) {
 			System.out.println("Cannot execute sql order at load products method");
 			// e.printStackTrace();
