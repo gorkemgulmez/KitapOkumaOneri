@@ -1,4 +1,3 @@
-
 package db;
 
 import java.sql.Connection;
@@ -9,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import javafx.collections.ObservableList;
+import model.BookModel;
 
 public class Database {
     
@@ -38,6 +38,7 @@ public class Database {
 		
 		try{
                     PreparedStatement stmt = connection.prepareStatement("SELECT * FROM bx_books  ");
+
 			ResultSet rs = stmt.executeQuery();
                         while(rs.next()){
                             String book_title = rs.getString("book_title");
@@ -107,6 +108,7 @@ public class Database {
 		
 		try{
                     PreparedStatement stmt = connection.prepareStatement("SELECT book_title FROM bx_books  ORDER BY `isbn` ASC ");
+
 			ResultSet rs = stmt.executeQuery();
                         while(rs.next()){
                             String book = rs.getString("book_title");
@@ -158,8 +160,24 @@ public class Database {
 		}
          return false;
     }
-        public static void main(String[] args) {
-            Database.setConnection();
-            Database.Kitap_Secim();
-    }
+        public static void getBookData(ObservableList<BookModel> books) {
+		String sql_order = "SELECT * FROM `bx_books`";
+		books.clear();
+		try {
+			Statement state = connection.createStatement();
+			ResultSet rs = state.executeQuery(sql_order);
+			while (rs.next()) {
+				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"),
+						rs.getString("book_author"), rs.getString("year_of_publication"),
+						rs.getString("publisher"), rs.getString("image_url_s") ));
+rs.close();
+			}
+		} catch (SQLException e) {
+			System.out.println("Cannot execute sql order at load products method");
+			// e.printStackTrace();
 }
+	}
+	}
+	
+	
+
