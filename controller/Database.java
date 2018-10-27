@@ -160,12 +160,13 @@ public class Database {
 			while (rs.next()) {
 				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"),
 						rs.getString("book_author"), rs.getString("year_of_publication"),
-						rs.getString("publisher"), rs.getString("image_url_s") ));
+						rs.getString("publisher"), rs.getString("image_url_l") ));
 			}
 			rs.close();
 		} catch (SQLException e) {
 			System.out.println("Cannot execute sql order at load products method");
 			// e.printStackTrace();
+
 }
 	}
            public static void populer_book(ObservableList<BookModel> populerbooks){
@@ -205,6 +206,15 @@ public class Database {
         
     }
        }
+
+		}
+	}
+
+        
+        public static void deleteBook(String isbn) {
+        	//isbn kay�tl� kitab� sil
+        }
+}
 	
 	
 
