@@ -55,7 +55,7 @@ public class MainWindowController {
 		rateBox.setItems(rateList);
 		
 		//Table Listeners
-		bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
+		bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
 
 			@Override
 			public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {

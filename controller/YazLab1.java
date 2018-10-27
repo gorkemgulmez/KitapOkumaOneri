@@ -25,7 +25,7 @@ public class YazLab1 extends Application {
 			e.printStackTrace();
 		}
         
-        stage.setTitle("Giri�");
+        stage.setTitle("Giriş");
         stage.show();
     }
 
