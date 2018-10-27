@@ -37,10 +37,14 @@ public class Database {
         public static void Kitap_Secim() {
 		
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `bx_books` WHERE user=admin AND password=333ordEMmgH8aJud");
-			stmt.setString(1," admin");
-			stmt.setString(2, "333ordEMmgH8aJud");
+                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM bx_books  ");
 			ResultSet rs = stmt.executeQuery();
+                        while(rs.next()){
+                            String book_title = rs.getString("book_title");
+                            String image_url_s = rs.getString("image_url_s");
+                            System.out.println(rs);
+                        }
+                        
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -49,9 +53,7 @@ public class Database {
 	public static void Users(){
 			
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM 'bx_users' WHERE user=admin AND password=333ordEMmgH8aJud");
-			stmt.setString(1," admin");
-			stmt.setString(2, "333ordEMmgH8aJud");
+                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM bx_users");
 			ResultSet rs = stmt.executeQuery();
 		}
 		catch(SQLException e) {
@@ -62,9 +64,7 @@ public class Database {
 	public static void populer_book(){
 					
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `bx_book_ratings` WHERE user=admin AND password=333ordEMmgH8aJud BY `bx_book_ratings`.`book_rating` DESC LIMIT 10");
-			stmt.setString(1," admin");
-			stmt.setString(2, "333ordEMmgH8aJud");
+                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `bx_book_ratings` ORDER BY `bx_book_ratings`.`book_rating` ASC LIMIT 10");
 			ResultSet rs = stmt.executeQuery();
 		}
 		catch(SQLException e) {
@@ -72,33 +72,31 @@ public class Database {
 		}
 	}
 	
-	public static void Register(){
+	public static void Register(String username,String password,String location,String age){
 	
-		System.out.println("Konumunuzu giriniz:");
-		Scanner sc= new Scanner(System.in);
-		String location=sc.nextLine();
-		System.out.println("Yaşınızı  giriniz:");
-		String age=sc.nextLine();
-	/*	PreparedStatement stmt = connection.prepareStatement("İNSERT İNTO `bx_users` WHERE user=admin AND password=333ordEMmgH8aJud  VALUES ( location + " " + age ) ");
-		
-		try{
-			stmt.setString(1," admin");
-			stmt.setString(2, "333ordEMmgH8aJud");
-			ResultSet rs = stmt.executeQuery();
+            try{
+                    PreparedStatement stmt = connection.prepareStatement("İNSERT İNTO bx_users VALUES ( username + password + location + age )");
+			stmt.setString(1,username);
+			stmt.setString(2,password);
+                        stmt.setString(3,location);
+			stmt.setString(4,age);
+			stmt.executeUpdate();
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
 	public static void Bring_Register(){
 		
 		
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `bx_users`  WHERE user=admin AND password=333ordEMmgH8aJud ORDER BY `bx_users`.`user_id` ASC ");
-			stmt.setString(1," admin");
-			stmt.setString(2, "333ordEMmgH8aJud");
+                    PreparedStatement stmt = connection.prepareStatement("SELECT * FROM bx_users  ORDER BY `bx_users`.`user_id` ASC ");
 			ResultSet rs = stmt.executeQuery();
+                        while(rs.next()){
+                            String register = rs.getString("username");
+                            String password = rs.getString("password");
+                                                   }
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -107,16 +105,61 @@ public class Database {
 	
 	public static void Bring_Books(){
 		
-		
 		try{
-                    PreparedStatement stmt = connection.prepareStatement("SELECT book_title FROM `bx_books`  WHERE user=admin AND password=333ordEMmgH8aJud ORDER BY `isbn` ASC ");
-			stmt.setString(1," admin");
-			stmt.setString(2, "333ordEMmgH8aJud");
+                    PreparedStatement stmt = connection.prepareStatement("SELECT book_title FROM bx_books  ORDER BY `isbn` ASC ");
 			ResultSet rs = stmt.executeQuery();
-		}
+                        while(rs.next()){
+                            String book = rs.getString("book_title");
+                        }
+                       }
 		catch(SQLException e) {
 			e.printStackTrace();
 		}	
 		
-	}
+	
+        }
+        public static boolean isUserExist(String username, String password){
+            
+            try{
+                    PreparedStatement stmt = connection.prepareStatement("Select username FROM bx_users ");
+                    ResultSet rs = stmt.executeQuery();
+                     while(rs.next()){
+                      String id=rs.getString("username");
+                      String pw=rs.getString("password");
+                      
+                       if(username==id && pw==password){
+                           return true;
+                       }
+                       else return false;
+            }
+                       rs.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+               return false;
+        }
+        public static boolean isUserVoted(String username){
+            try{
+                    PreparedStatement stmt = connection.prepareStatement("Select book_number FROM bx_users ");
+			/*stmt.setString(1,"admin");
+			stmt.setString(2, "333ordEMmgH8aJud");*/
+			ResultSet rs = stmt.executeQuery();
+                     while(rs.next()){
+                      int book_number=rs.getInt("book_number");
+                       if(book_number >=10){
+                           return true;
+                       }
+                       else return false;
+            }
+        }
+            catch(SQLException e) {
+			e.printStackTrace();
+		}
+         return false;
+    }
+        public static void main(String[] args) {
+            Database.setConnection();
+            Database.Kitap_Secim();
+    }
 }
