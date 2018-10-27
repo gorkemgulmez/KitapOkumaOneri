@@ -95,8 +95,6 @@ public class MainWindowController {
 		rateBox.setItems(rateList);
 		adminBox.setItems(adminList);
 		
-		//Table Listeners
-		bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
 
 		///Table Listeners
 		bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
@@ -106,9 +104,8 @@ public class MainWindowController {
 			}
 			
 		});
+		
 		bookTablePopular.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
-
-
 			@Override
 			public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
 				setSelectedItemsProp(bookTablePopular);
