@@ -60,12 +60,13 @@
       <AnchorPane prefHeight="485.0" prefWidth="284.0">
          <children>
             <Button fx:id="readButton" disable="true" layoutX="18.0" layoutY="165.0" mnemonicParsing="false" onMouseClicked="#readPDF" prefHeight="25.0" prefWidth="211.0" text="İncele" />
-            <Button disable="true" layoutX="181.0" layoutY="14.0" mnemonicParsing="false" text="Admin" />
+            <Button fx:id="adminButton" layoutX="181.0" layoutY="14.0" mnemonicParsing="false" text="Admin" />
             <Button disable="true" layoutX="141.0" layoutY="413.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="64.0" text="Oyla" />
             <ChoiceBox fx:id="rateBox" layoutX="54.0" layoutY="413.0" prefHeight="25.0" prefWidth="71.0" />
             <ChoiceBox fx:id="adminBox" layoutX="75.0" layoutY="14.0" prefHeight="25.0" prefWidth="100.0" />
             <ImageView fx:id="imgView" fitHeight="174.0" fitWidth="133.0" layoutX="70.0" layoutY="215.0" pickOnBounds="true" preserveRatio="true" />
-            <Text fx:id="bookNameT" layoutX="18.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="210.9999918937683" />
+            <Text fx:id="bookNameT" layoutX="18.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="210.9999918937683" />
+            <Text fx:id="remainingText" layoutX="18.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="210.99999725818634" />
          </children>
       </AnchorPane>
    </children>

@@ -52,6 +52,8 @@ public class MainWindowController {
 	@FXML private ChoiceBox<Integer> rateBox;
 	@FXML private ChoiceBox<String> adminBox;
 	@FXML private Button readButton;
+	@FXML private Button adminButton;
+	@FXML private Text remainingText;
 	
 	private ObservableList<BookModel> books = FXCollections.observableArrayList();
 	private ObservableList<BookModel> booksPopular = FXCollections.observableArrayList();
@@ -60,7 +62,13 @@ public class MainWindowController {
 	private ObservableList<Integer> rateList = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10);
 	private ObservableList<String> adminList = FXCollections.observableArrayList("Ekle", "Sil", "Duzenle");
 	
-	private BookModel lastSelectedmodel;
+	private BookModel lastSelectedModel;
+	
+	private int userID;
+	
+	protected void setUserID(int id) {
+		userID = id;
+	}
 	
 	public void initialize() {
 		///Book Table Init
@@ -120,11 +128,23 @@ public class MainWindowController {
 			}
 			
 		});
+		
+		if(userID != 1) {
+			adminBox.setVisible(false);
+			adminButton.setVisible(false);
+		}
+		
+		int remainingBook = Database.userVotedBook(userID);
+		if(remainingBook < 10) {
+			adminBox.setVisible(false);
+			adminButton.setVisible(false);
+			remainingText.setText("Kalan Kitap: " + (10-remainingBook));
+		}
 	}
 	
 	public void setSelectedItemsProp(TableView<BookModel> t) {
 		BookModel model = t.getSelectionModel().getSelectedItem();
-		lastSelectedmodel = model;
+		lastSelectedModel = model;
 		
 		bookNameT.setText(model.getName());
 		Image img = new Image(model.getImageLink());
@@ -136,7 +156,7 @@ public class MainWindowController {
 		if(Desktop.isDesktopSupported()) {
 			try {
 				Random rand = new Random();
-				File pdf = new File("file:..\\..\\resource\\pdf" + Integer.toString(rand.nextInt(5)+1) + ".pdf");
+				File pdf = new File("file:..\\..\\resource\\pdf" + rand.nextInt(5)+1 + ".pdf");
 				Desktop.getDesktop().open(pdf);
 			}catch(IOException e) {
 				e.printStackTrace();
@@ -146,7 +166,7 @@ public class MainWindowController {
 	
 	public void vote() {
 		int rate = rateBox.getSelectionModel().getSelectedIndex()+1;
-		//Database.VoteBook(userId, bookId, rate);
+		Database.VoteBook(userID, lastSelectedModel.getIsbn(), rate);
 	}
 	
 	public void handleAdminButton() {
@@ -155,7 +175,7 @@ public class MainWindowController {
 			//ekle
 		}
 		else if(choice == 1) {
-			Database.deleteBook(lastSelectedmodel.getIsbn());
+			Database.deleteBook(lastSelectedModel.getIsbn());
 		}
 		else {
 			//d�zelt

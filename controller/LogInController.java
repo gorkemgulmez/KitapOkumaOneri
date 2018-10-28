@@ -20,7 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-public class LogInController implements Initializable {
+public class LogInController {
     
 	@FXML private TextField username;
 	@FXML private PasswordField password;
@@ -31,62 +31,31 @@ public class LogInController implements Initializable {
 			return;
 		}
 		//if( !Database.isUserExist(username.getText, password.getText)) {
-		//new ErrorMessage("HatalÄ± KullanÄ±cÄ± AdÄ± ve ya Å�ifre");
-		//return;
+			//new ErrorMessage("HatalÄ± KullanÄ±cÄ± AdÄ± ve ya Å�ifre");
+			//return;
 		//} 
-		//if() //TODO Database.isUserVoted(username.getText()) {
-			//if() //normal user
-				Parent root;
-				try {
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(getClass().getResource("MainWindow.fxml"));
-					loader.load();
-					
-					root = loader.getRoot();
-					Scene scene = new Scene(root);
-					
-					window.setScene(scene);
-					window.setTitle("Kitap Okuma");
-				} catch (IOException e) {
-					System.out.println("Could not load MainWindow.fxml");
-					e.printStackTrace();
-				}
-			//else {}
-				/*Parent root;
-				try {
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(getClass().getResource("AdminEdit.fxml"));
-					loader.load();
-					
-					root = loader.getRoot();
-					Scene scene = new Scene(root, 500, 600);
-					
-					window.setScene(scene);
-					window.setTitle("KayÄ±t Ol");
-				} catch (IOException e) {
-					System.out.println("Could not load AdminEdit.fxml");
-					e.printStackTrace();
-				}
-	
-		//}
+		
+		int userId = Database.getUserId(username.getText());
+		
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("MainWindow.fxml"));
+			loader.load();
 			
-		//else {
-				Parent root;
-				try {
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(getClass().getResource("RateBook.fxml"));
-					loader.load();
-					
-					root = loader.getRoot();
-					Scene scene = new Scene(root, 500, 600);
-					
-					window.setScene(scene);
-					window.setTitle("KayÄ±t Ol");
-				} catch (IOException e) {
-					System.out.println("Could not load RateBook.fxml");
-					e.printStackTrace();
-				}*/
-		//}
+			MainWindowController controller = loader.getController();
+			controller.setUserID(userId);
+			
+			root = loader.getRoot();
+			Scene scene = new Scene(root);
+			
+			window.setScene(scene);
+			window.setTitle("Kitap Okuma");
+		} catch (IOException e) {
+			System.out.println("Could not load MainWindow.fxml");
+			e.printStackTrace();
+		}
+			
 	}
 	
 	public void registerRedirect() {
@@ -107,10 +76,6 @@ public class LogInController implements Initializable {
 		}
 			
 	}
-    
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-
-    }    
+  
     
 }

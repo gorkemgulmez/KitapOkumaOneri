@@ -15,8 +15,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import model.UserRegisterModel;
 
-public class RegisterController implements Initializable {
+public class RegisterController {
 
 	@FXML private TextField username;
 	@FXML private PasswordField password;
@@ -29,15 +30,22 @@ public class RegisterController implements Initializable {
 			new ErrorMessage("Bütün Alanlarýn Doldurulmasý Gerekmektedir");
 			return;
 		}
-		//if() //Database.isUserExist(string username)
-			//new ErrorMessage("Kullanýcý adý alýnmýþ");
-			//return;
+		
+		UserRegisterModel user = new UserRegisterModel(username.getText(), password.getText(), address.getText(), age.getText());
+		int userId = Database.createUser(user);
+		if(userId == -1) {
+			new ErrorMessage("Kayit olurken hata olustu");
+			return;
+		}
 		
 		Parent root;
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("RateBook.fxml"));
+			loader.setLocation(getClass().getResource("MainWindow.fxml"));
 			loader.load();
+			
+			MainWindowController controller = loader.getController();
+			controller.setUserID(userId);
 			
 			root = loader.getRoot();
 			Scene scene = new Scene(root);
@@ -45,7 +53,7 @@ public class RegisterController implements Initializable {
 			window.setScene(scene);
 			window.setTitle("Kayýt Ol");
 		} catch (IOException e) {
-			System.out.println("Could not load RateBook.fxml");
+			System.out.println("Could not load MainWindow.fxml");
 			e.printStackTrace();
 		}
 		
@@ -70,9 +78,4 @@ public class RegisterController implements Initializable {
 
 	}
 
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
-		
-	}
 }

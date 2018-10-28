@@ -135,21 +135,19 @@ public class Database {
 		}
 		return false;
 	}
-	public static boolean isUserVoted(String username){
+	public static int userVotedBook(int userId){
 		try{
 			PreparedStatement stmt = connection.prepareStatement("Select book_number FROM bx_users ");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()){
 				int book_number=rs.getInt("book_number");
-				if(book_number >=10){
-					return true;
-				}
+				return book_number;
 			}
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return 0;
 	}
 	
 	public static void getBookData(ObservableList<BookModel> books) {
@@ -206,5 +204,20 @@ public class Database {
 	public static void deleteBook(String isbn) {
     	//isbn kayï¿½tlï¿½ kitabï¿½ sil
     }
+
+	public static void VoteBook(int userID, String isbn, int rate) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static int createUser(UserRegisterModel user) {
+		// Kullanýcý yaratýlamazsa -1 dondurulecek
+		return -1;
+	}
+
+	public static int getUserId(String text) {
+		// kullanýcý adýndan userId yi getir
+		return 0;
+	}
 
 }
