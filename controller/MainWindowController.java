@@ -90,13 +90,13 @@ public class MainWindowController {
 		//dateCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publish_date"));
 		publisherCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publisher"));
 		
-		Database.getBookData(books);
+		Database.getBooks(books);
 		bookTable.setItems(books);
 		
-		Database.getBookData(booksPopular);
+		Database.getPopularBooks(booksPopular);
 		bookTablePopular.setItems(booksPopular);
 		
-		Database.getBookData(booksBest);
+		Database.getBestBooks(booksBest);
 		bookTableBest.setItems(booksBest);
 		
 		///ChoiceBox
