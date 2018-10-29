@@ -2,26 +2,27 @@ package controller;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import model.BookModel;
 
 public class MainWindowController {
@@ -53,6 +54,7 @@ public class MainWindowController {
 	@FXML private ChoiceBox<String> adminBox;
 	@FXML private Button readButton;
 	@FXML private Button adminButton;
+	@FXML private Button voteButton;
 	@FXML private Text remainingText;
 	
 	private ObservableList<BookModel> books = FXCollections.observableArrayList();
@@ -67,10 +69,11 @@ public class MainWindowController {
 	private int userID;
 	
 	protected void setUserID(int id) {
-		userID = id;
+		this.userID = id;
+		System.out.println(this.userID);
 	}
 	
-	public void initialize() {
+	@FXML public void initialize() {	
 		///Book Table Init
 		isbnC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("isbn"));
 		nameC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("name"));
@@ -90,56 +93,50 @@ public class MainWindowController {
 		//dateCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publish_date"));
 		publisherCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publisher"));
 		
+		///ChoiceBox
+		rateBox.setItems(rateList);
+		adminBox.setItems(adminList);		
+
+		adminBox.setVisible(false);
+		adminButton.setVisible(false);
+		
 		Database.getBooks(books);
 		bookTable.setItems(books);
 		
-		Database.getPopularBooks(booksPopular);
-		bookTablePopular.setItems(booksPopular);
-		
-		Database.getBestBooks(booksBest);
-		bookTableBest.setItems(booksBest);
-		
-		///ChoiceBox
-		rateBox.setItems(rateList);
-		adminBox.setItems(adminList);
-		
+		Platform.runLater(() -> {
+			//Database.getPopularBooks(booksPopular);
+			//bookTablePopular.setItems(booksPopular);
+			
+			//Database.getBestBooks(booksBest);
+			//bookTableBest.setItems(booksBest);
+			
+			///Table Listeners
+			bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
+				@Override
+				public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
+					setSelectedItemsProp(bookTable);
+				}
+				
+			});
+			
+			bookTablePopular.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
+				@Override
+				public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
+					setSelectedItemsProp(bookTablePopular);
+				}
+				
+			});
+			bookTableBest.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
 
-		///Table Listeners
-		bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
-			@Override
-			public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
-				setSelectedItemsProp(bookTable);
-			}
-			
-		});
-		
-		bookTablePopular.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
-			@Override
-			public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
-				setSelectedItemsProp(bookTablePopular);
-			}
-			
-		});
-		bookTableBest.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
+				@Override
+				public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
+					setSelectedItemsProp(bookTableBest);
+				}
+				
+			});
 
-			@Override
-			public void changed(ObservableValue<? extends BookModel> arg0, BookModel arg1, BookModel arg2) {
-				setSelectedItemsProp(bookTableBest);
-			}
-			
 		});
 		
-		if(userID != 1) {
-			adminBox.setVisible(false);
-			adminButton.setVisible(false);
-		}
-		
-		int remainingBook = Database.userVotedBook(userID);
-		if(remainingBook < 10) {
-			adminBox.setVisible(false);
-			adminButton.setVisible(false);
-			remainingText.setText("Kalan Kitap: " + (10-remainingBook));
-		}
 	}
 	
 	public void setSelectedItemsProp(TableView<BookModel> t) {
@@ -150,13 +147,26 @@ public class MainWindowController {
 		Image img = new Image(model.getImageLink());
         imgView.setImage(img);
         readButton.setDisable(false);
+        voteButton.setDisable(false);
+        
+        int remainingBook = Database.userVotedBook(userID);
+		if(remainingBook < 10 && userID!=1) {
+			
+			remainingText.setText("Kalan Kitap: " + (10-remainingBook));
+		}
+		
+		if(userID == 1) {
+			adminBox.setVisible(true);
+			adminButton.setVisible(true);
+			remainingText.setVisible(false);
+		}
 	}
 	
 	public void readPDF() {
 		if(Desktop.isDesktopSupported()) {
 			try {
 				Random rand = new Random();
-				File pdf = new File("file:..\\..\\resource\\pdf" + Integer.toString(rand.nextInt(5))+1 + ".pdf");
+				File pdf = new File("file:..\\..\\resource\\pdf" + Integer.toString(rand.nextInt(5)+1) + ".pdf");
 				Desktop.getDesktop().open(pdf);
 			}catch(IOException e) {
 				e.printStackTrace();
@@ -166,19 +176,76 @@ public class MainWindowController {
 	
 	public void vote() {
 		int rate = rateBox.getSelectionModel().getSelectedIndex()+1;
-		Database.VoteBook(userID, lastSelectedModel.getIsbn(), rate);
+		Database.VoteBook(Integer.toString(userID), lastSelectedModel.getIsbn(), Integer.toString(rate));
+		int remainingBook = Database.userVotedBook(userID);
+		remainingText.setText("Kalan Kitap: " + (10-remainingBook));
 	}
 	
 	public void handleAdminButton() {
 		int choice = adminBox.getSelectionModel().getSelectedIndex();
+
 		if(choice == 0) {
-			//ekle
+			Parent root;
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("AddBook.fxml"));
+			try {
+				loader.load();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Stage win = new Stage();
+			
+			root = loader.getRoot();
+			Scene scene = new Scene(root);
+			
+			win.setScene(scene);
+			win.setTitle("Kitap Ekle");
+			win.show();
 		}
+		
 		else if(choice == 1) {
 			Database.deleteBook(lastSelectedModel.getIsbn());
+			books.remove(books.indexOf(lastSelectedModel));
+		}
+		else if(choice == 2) {
+			Parent root;
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("AddUser.fxml"));
+			try {
+				loader.load();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Stage win = new Stage();
+			root = loader.getRoot();
+			Scene scene = new Scene(root);
+			
+			win.setScene(scene);
+			win.setTitle("Kullanici Ekle");
+			win.show();
 		}
 		else {
-			//d�zelt
+			Parent root;
+			Stage window = new Stage();
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("DeleteUser.fxml"));
+			try {
+				loader.load();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			root = loader.getRoot();
+			Scene scene = new Scene(root);
+			
+			window.setScene(scene);
+			window.setTitle("Kullanici Sil");
+			window.show();
 		}
 	}
 	

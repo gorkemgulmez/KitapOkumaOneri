@@ -30,10 +30,10 @@ public class LogInController {
 			new ErrorMessage("Lütfen bilgileri eksiksiz doldurun");
 			return;
 		}
-		//if( !Database.isUserExist(username.getText, password.getText)) {
-			//new ErrorMessage("HatalÄ± KullanÄ±cÄ± AdÄ± ve ya Å�ifre");
-			//return;
-		//} 
+		if( !Database.isUserExist(username.getText(), password.getText())) {
+			new ErrorMessage("Hatali Kullanici Adi ve ya Sifre");
+			return;
+		} 
 		
 		int userId = Database.getUserId(username.getText());
 		
@@ -42,11 +42,11 @@ public class LogInController {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("MainWindow.fxml"));
 			loader.load();
+			root = loader.getRoot();
 			
-			MainWindowController controller = loader.getController();
+			MainWindowController controller = loader.<MainWindowController>getController();
 			controller.setUserID(userId);
 			
-			root = loader.getRoot();
 			Scene scene = new Scene(root);
 			
 			window.setScene(scene);
@@ -76,6 +76,5 @@ public class LogInController {
 		}
 			
 	}
-  
-    
+	
 }
