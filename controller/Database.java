@@ -222,7 +222,6 @@ public class Database {
 	}
                 
 	
-	
 	public static void deleteBook(String isbn) {
             String Sql= "DELETE From bx_books WHERE isbn = ? ";
             try{
@@ -275,19 +274,18 @@ public class Database {
                     e.printStackTrace();
                 }
 		//ama kullan�c� bu kitab� oylam���a �nceki veriyi sil
-            
         }
 
 	public static int getUserId(String username) {
             try{		
-                PreparedStatement stmt = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username='" + username + "'");
-                //stmt.setInt(1,username);
+                PreparedStatement stmt = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username= ? ");
+                stmt.setString(1,username);
                 ResultSet user = stmt.executeQuery();
-                int user_id= user.getInt("user_id");
+                return (user.getInt("user_id"));
             }
             catch(SQLException e){
                 e.printStackTrace();
             }
-		return 0;
+		return -1;
 	}
 }
