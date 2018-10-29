@@ -26,7 +26,7 @@ public class Database {
 			connection = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
 			System.out.println("Error while accessing database");
-			e.printStackTrace();
+			//e.printStackTrace();
 			return;
 		}
 		System.out.println("Success");
@@ -126,14 +126,18 @@ public class Database {
 	public static int createUser(UserRegisterModel user){
 
 		try{
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_users ( username , password , location , age )" + "VALUES( ? , ? , ? , ?)");
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_users ( username , password , location , age, book_number )" + "VALUES( ? , ? , ? , ?, ?)");
 			stmt.setString(1,user.getUsername());
 			stmt.setString(2,user.getPassword());
 			stmt.setString(3,user.getAdress());
 			stmt.setString(4,user.getAge());
+			stmt.setInt(5, 0);
 			stmt.executeUpdate();
 	
-			//kullanï¿½cï¿½nï¿½n idsini
+			//kullanýcýnýn idisini dondur
+			System.out.println(getUserId(user.getUsername()));
+			return getUserId(user.getUsername());
+			
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
