@@ -277,7 +277,9 @@ public class Database {
                 PreparedStatement stmt = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username= ? ");
                 stmt.setString(1,username);
                 ResultSet user = stmt.executeQuery();
-                return (user.getInt("user_id"));
+                while(user.next()){
+               return user.getInt("user_id");
+                }
             }
             catch(SQLException e){
                 e.printStackTrace();
