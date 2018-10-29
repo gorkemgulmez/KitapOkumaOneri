@@ -60,7 +60,7 @@ public class MainWindowController {
 	private ObservableList<BookModel> booksBest = FXCollections.observableArrayList();
 	
 	private ObservableList<Integer> rateList = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10);
-	private ObservableList<String> adminList = FXCollections.observableArrayList("Ekle", "Sil", "Kullanýcý Ekle", "Kullanici Sil");
+	private ObservableList<String> adminList = FXCollections.observableArrayList("Ekle", "Sil", "Kullanici Ekle", "Kullanici Sil");
 	
 	private BookModel lastSelectedModel;
 	
