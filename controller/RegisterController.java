@@ -27,7 +27,7 @@ public class RegisterController {
 	public void registerAction() {
 		if( username.getText().equals("") || password.getText().equals("") 
 				|| address.getText().equals("") || age.getText().equals("") ) {
-			new ErrorMessage("Bütün Alanlarýn Doldurulmasý Gerekmektedir");
+			new ErrorMessage("BÃ¼tÃ¼n Alanlarin Doldurulmasi Gerekmektedir");
 			return;
 		}
 		
@@ -51,7 +51,7 @@ public class RegisterController {
 			Scene scene = new Scene(root);
 			
 			window.setScene(scene);
-			window.setTitle("Kayýt Ol");
+			window.setTitle("Kayit Ol");
 		} catch (IOException e) {
 			System.out.println("Could not load MainWindow.fxml");
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public class RegisterController {
 			Scene scene = new Scene(root);
 			
 			window.setScene(scene);
-			window.setTitle("Kayýt Ol");
+			window.setTitle("Kayit Ol");
 		} catch (IOException e) {
 			System.out.println("Could not load LogIn.fxml");
 			e.printStackTrace();

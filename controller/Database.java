@@ -126,14 +126,14 @@ public class Database {
 	public static int createUser(UserRegisterModel user){
 
 		try{
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_users VALUES ( username + password + location + age )");
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_users ( username , password , location , age )" + "VALUES( ? , ? , ? , ?)");
 			stmt.setString(1,user.getUsername());
 			stmt.setString(2,user.getPassword());
 			stmt.setString(3,user.getAdress());
 			stmt.setString(4,user.getAge());
 			stmt.executeUpdate();
-			//PreparedStatement user = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username='" + user.getUsername() + "'");
-			//kullanýcýnýn idsini
+	
+			//kullanï¿½cï¿½nï¿½n idsini
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -194,29 +194,96 @@ public class Database {
 		return 0;
 	}
 	
-	public static void createBook(BookRegisterModel book) {
+	public static int createBook(BookRegisterModel book) {
 		//insert et 
+                try{
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_books (isbn , book_title , book_author , year_of_publication , publisher , image_url_s , image_url_m , image_url_l)" + " VALUES (?,?,?,?,?,?,?,?)");
+			stmt.setString(1,book.getIsbn());
+			stmt.setString(2,book.getName());
+			stmt.setString(3,book.getAuthor());
+			stmt.setString(4,book.getPublish_date());
+                        stmt.setString(5,book.getPublisher());
+                        stmt.setString(6,book.getImageLink_s());
+                        stmt.setString(7,book.getImageLink_m());
+                        stmt.setString(8,book.getImage_l());
+			stmt.executeUpdate();
+	
+			//kullanï¿½cï¿½nï¿½n idsini
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+
+		}
+		return -1;
 	}
+                
+	
 	
 	public static void deleteBook(String isbn) {
+            String Sql= "DELETE From bx_books WHERE isbn = ? ";
+            try{
+                 PreparedStatement stmt = connection.prepareStatement(Sql);
+                 stmt.setString(1,isbn);
+                 stmt.executeUpdate();
+            }
+            catch(SQLException e){
+                e.printStackTrace();
+            }
     	//isbn kayï¿½tlï¿½ kitabï¿½ sil
     }
 	
 	public static void deleteUser(int id) {
-		//id si verilen kullanýcýyý sil
+            String Sql= "DELETE From bx_users WHERE user_id = ? ";
+            try{
+                 PreparedStatement stmt = connection.prepareStatement(Sql);
+                 stmt.setInt(1,id);
+                 stmt.executeUpdate();
+            }
+            catch(SQLException e){
+                e.printStackTrace();
+            }
+		//id si verilen kullanï¿½cï¿½yï¿½ sil
 	}
 
 	public static void VoteBook(int userID, String isbn, int rate) {
 		// TODO Auto-generated method stub
-		//oylamayý kaydet
-		//ama kullanýcý bu kitabý oylamýþþa önceki veriyi sil
-	}
+                try{
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_book_ratings (user_id,isbn,book_rating)" + " VALUES ( ? , ? , ? )");
+			stmt.setInt(1,userID);
+			stmt.setString(2,isbn);
+			stmt.setInt(3,rate);
+			stmt.executeUpdate();
+			//kullanï¿½cï¿½nï¿½n idsini
+              		//oylamayï¿½ kaydet
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+                }
+        }
+        public static void UpdateVoteBook(int rate){
+             //AÅŸaÄŸÄ±daki kod satiri baÅŸka bir fonksiyona atilacak 
+                try{
+                    PreparedStatement stmt2 = connection.prepareStatement("UPDATE bx_book_ratings SET book_rating = ? ");
+                    stmt2.setInt(1, rate);
+                    stmt2.executeUpdate();
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
+		//ama kullanï¿½cï¿½ bu kitabï¿½ oylamï¿½ï¿½ï¿½a ï¿½nceki veriyi sil
+            
+        }
 
 	public static int getUserId(String username) {
-		// kullanýcý adýndan userId yi getir
+            try{		
+                PreparedStatement stmt = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username='" + username + "'");
+                //stmt.setInt(1,username);
+                ResultSet user = stmt.executeQuery();
+                int user_id= user.getInt("user_id");
+            }
+            catch(SQLException e){
+                e.printStackTrace();
+            }
 		return 0;
 	}
-	
-	
-
 }
