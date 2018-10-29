@@ -156,7 +156,7 @@ public class MainWindowController {
 		if(Desktop.isDesktopSupported()) {
 			try {
 				Random rand = new Random();
-				File pdf = new File("file:..\\..\\resource\\pdf" + rand.nextInt(5)+1 + ".pdf");
+				File pdf = new File("file:..\\..\\resource\\pdf" + Integer.toString(rand.nextInt(5))+1 + ".pdf");
 				Desktop.getDesktop().open(pdf);
 			}catch(IOException e) {
 				e.printStackTrace();
