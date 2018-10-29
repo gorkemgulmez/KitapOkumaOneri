@@ -5,8 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="632.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="632.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AdminController">
    <children>
       <Text layoutX="46.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ISBN" />
       <Text layoutX="46.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kitap Adı" />
@@ -24,8 +23,7 @@
       <TextField layoutX="429.0" layoutY="61.0" />
       <TextField layoutX="429.0" layoutY="106.0" />
       <TextField layoutX="429.0" layoutY="151.0" />
-      <Button layoutX="206.0" layoutY="307.0" mnemonicParsing="false" text="Kaydet" />
-      <Button layoutX="296.0" layoutY="307.0" mnemonicParsing="false" text="Sıfırla" />
-      <Button layoutX="378.0" layoutY="307.0" mnemonicParsing="false" text="İptal" />
+      <Button layoutX="253.0" layoutY="307.0" mnemonicParsing="false" text="Kaydet" />
+      <Button layoutX="328.0" layoutY="307.0" mnemonicParsing="false" text="İptal" />
    </children>
 </AnchorPane>
