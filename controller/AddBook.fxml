@@ -15,15 +15,14 @@
       <Text layoutX="348.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yayınlayan" />
       <Text layoutX="348.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Resim(küçük)" />
       <Text layoutX="348.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Resim(orta)" />
-      <TextField layoutX="157.0" layoutY="61.0" />
-      <TextField layoutX="157.0" layoutY="106.0" />
-      <TextField layoutX="157.0" layoutY="151.0" />
-      <TextField layoutX="157.0" layoutY="200.0" />
-      <TextField layoutX="429.0" layoutY="200.0" />
-      <TextField layoutX="429.0" layoutY="61.0" />
-      <TextField layoutX="429.0" layoutY="106.0" />
-      <TextField layoutX="429.0" layoutY="151.0" />
-      <Button layoutX="253.0" layoutY="307.0" mnemonicParsing="false" text="Kaydet" />
-      <Button layoutX="328.0" layoutY="307.0" mnemonicParsing="false" text="İptal" />
+      <TextField fx:id="isbn" layoutX="157.0" layoutY="61.0" />
+      <TextField fx:id="kitap_adi" layoutX="157.0" layoutY="106.0" />
+      <TextField fx:id="yazar" layoutX="157.0" layoutY="151.0" />
+      <TextField fx:id="yayinlanma_tarihi" layoutX="157.0" layoutY="200.0" />
+      <TextField fx:id="yayinlayan" layoutX="429.0" layoutY="61.0" />
+      <TextField fx:id="resim_k" layoutX="429.0" layoutY="106.0" />
+      <TextField fx:id="resim_o" layoutX="429.0" layoutY="151.0" />
+      <TextField fx:id="resim_b" layoutX="429.0" layoutY="200.0" />
+      <Button layoutX="280.0" layoutY="276.0" mnemonicParsing="false" onAction="#addBook" prefHeight="25.0" prefWidth="96.0" text="Kaydet" />
    </children>
 </AnchorPane>

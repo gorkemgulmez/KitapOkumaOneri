@@ -12,11 +12,11 @@
       <PasswordField fx:id="password" layoutX="236.0" layoutY="123.0" />
       <Text layoutX="144.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kullanıcı Adı" />
       <Text layoutX="144.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Şifre" />
-      <Button layoutX="273.0" layoutY="260.0" mnemonicParsing="false" onAction="#registerAction" prefHeight="25.0" prefWidth="74.0" text="Kayıt Ol" />
       <TextField fx:id="address" layoutX="236.0" layoutY="167.0" />
       <TextField fx:id="age" layoutX="236.0" layoutY="209.0" />
       <Text layoutX="144.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Adres" />
       <Text layoutX="147.0" layoutY="226.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yaş" />
       <Text layoutX="253.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kayıt " />
+      <Button layoutX="273.0" layoutY="260.0" mnemonicParsing="false" onAction="#registerAction" prefHeight="25.0" prefWidth="74.0" text="Kayıt Ol" />
    </children>
 </Pane>

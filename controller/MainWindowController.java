@@ -12,10 +12,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,6 +29,8 @@ import model.BookModel;
 
 public class MainWindowController {
 
+	@FXML private Pagination pagination;
+	
 	@FXML private TableView<BookModel> bookTable;
 	@FXML private TableColumn<BookModel, String> isbnC;
 	@FXML private TableColumn<BookModel, String> nameC;
@@ -73,24 +77,39 @@ public class MainWindowController {
 		System.out.println(this.userID);
 	}
 	
-	@FXML public void initialize() {	
+	private int numberOfBooks = Database.getNumberofBooks();
+	private int rowsPerPage = 17, from=0, to=0;
+	
+	private Node createPage(int pageIndex) {
+		from = pageIndex * rowsPerPage;
+		to = Math.min(from + rowsPerPage, books.size());
+
+		Database.getBooks(books, pageIndex, rowsPerPage);
+		bookTable.setItems(books);
+		return bookTable;
+	}
+	
+	@FXML public void initialize() {
+		pagination.setPageCount((numberOfBooks/rowsPerPage) + 1);
+		pagination.setPageFactory(this::createPage);
+		
 		///Book Table Init
 		isbnC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("isbn"));
 		nameC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("name"));
 		authorC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("author"));
-		//dateC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publish_date"));
+		dateC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("date"));
 		publisherC.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publisher"));
 		
 		isbnCP.setCellValueFactory(new PropertyValueFactory<BookModel, String>("isbn"));
 		nameCP.setCellValueFactory(new PropertyValueFactory<BookModel, String>("name"));
 		authorCP.setCellValueFactory(new PropertyValueFactory<BookModel, String>("author"));
-		//dateCP.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publish_date"));
+		dateCP.setCellValueFactory(new PropertyValueFactory<BookModel, String>("date"));
 		publisherCP.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publisher"));
 		
 		isbnCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("isbn"));
 		nameCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("name"));
 		authorCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("author"));
-		//dateCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publish_date"));
+		dateCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("date"));
 		publisherCB.setCellValueFactory(new PropertyValueFactory<BookModel, String>("publisher"));
 		
 		///ChoiceBox
@@ -100,8 +119,6 @@ public class MainWindowController {
 		adminBox.setVisible(false);
 		adminButton.setVisible(false);
 		
-		Database.getBooks(books);
-		bookTable.setItems(books);
 		
 		Platform.runLater(() -> {
 			//Database.getPopularBooks(booksPopular);
@@ -191,7 +208,6 @@ public class MainWindowController {
 			try {
 				loader.load();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -204,7 +220,6 @@ public class MainWindowController {
 			win.setTitle("Kitap Ekle");
 			win.show();
 		}
-		
 		else if(choice == 1) {
 			Database.deleteBook(lastSelectedModel.getIsbn());
 			books.remove(books.indexOf(lastSelectedModel));
@@ -216,7 +231,6 @@ public class MainWindowController {
 			try {
 				loader.load();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -236,7 +250,6 @@ public class MainWindowController {
 			try {
 				loader.load();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

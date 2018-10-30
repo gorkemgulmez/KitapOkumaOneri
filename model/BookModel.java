@@ -4,14 +4,14 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class BookModel {
 
-	private SimpleStringProperty isbn, name, author, publish_date, publisher;
+	private SimpleStringProperty isbn, name, author, date, publisher;
 	private String imageLink;
 	
-	public BookModel(String isbn, String name, String author, String publish_date, String publisher, String imageLink) {
+	public BookModel(String isbn, String name, String author, String date, String publisher, String imageLink) {
 		this.isbn = new SimpleStringProperty(isbn);
 		this.name = new SimpleStringProperty(name);
 		this.author = new SimpleStringProperty(author);
-		this.publish_date = new SimpleStringProperty(publish_date);
+		this.date = new SimpleStringProperty(date);
 		this.publisher = new SimpleStringProperty(publisher);
 		this.imageLink = imageLink;
 	}
@@ -28,8 +28,8 @@ public class BookModel {
 		return author.get();
 	}
 	
-	public String getPublish_Date() {
-		return publish_date.get();
+	public String getDate() {
+		return date.get();
 	}
 	
 	public String getPublisher() {
@@ -52,8 +52,8 @@ public class BookModel {
 		this.author.set(author);
 	}
 	
-	public void setPublish_Date(String publish_date) {
-		this.publish_date.set(publish_date);
+	public void setDate(String publish_date) {
+		this.date.set(publish_date);
 	}
 	
 	public void setPublisher(String publisher) {

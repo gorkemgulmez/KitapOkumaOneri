@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
 import javafx.collections.ObservableList;
 import model.BookModel;
 import model.BookRegisterModel;
@@ -61,7 +60,7 @@ public class Database {
 		return -1;
 	}
 
-	public static void getUsers() {
+	/*public static void getUsers() {
 
 		try {
 			PreparedStatement stmt = connection
@@ -74,7 +73,7 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public static boolean isUserExist(String username, String password) {
 		String sqlOrder = "Select user_id FROM bx_users WHERE username = ? and password = ?";
@@ -119,6 +118,20 @@ public class Database {
 	}
 
 	// Books Methods
+	public static int getNumberofBooks() {
+		String sql_order = "SELECT COUNT(*) FROM bx_books";
+		try {
+			Statement state = connection.createStatement();
+			ResultSet rs = state.executeQuery(sql_order);
+			while(rs.next())
+				return rs.getInt(1);
+		} catch(SQLException e) {
+			System.out.println("Cannot get nums of books");
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
 	public static void getBooks(ObservableList<BookModel> books) {
 		String sql_order = "SELECT * FROM `bx_books`";
 		books.clear();
@@ -137,33 +150,71 @@ public class Database {
 		}
 	}
 
+	public static void getBooks(ObservableList<BookModel> books, int limit) {
+		String sql_order = "SELECT * FROM bx_books LIMIT " + limit;
+		books.clear();
+		try {
+			Statement state = connection.createStatement();
+			ResultSet rs = state.executeQuery(sql_order);
+			while (rs.next()) {
+				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"), rs.getString("book_author"),
+						rs.getString("year_of_publication"), rs.getString("publisher"), rs.getString("image_url_l")));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			System.out.println("Cannot execute sql order at load products method");
+			// e.printStackTrace();
+
+		}
+	}
+	
+	public static void getBooks(ObservableList<BookModel> books, int pageIndex, int limit) {
+		int end = pageIndex * limit;
+		int start = end - limit + 1;
+		//sql_order i degistir
+		String sql_order = "SELECT * FROM bx_books LIMIT " + limit;
+		books.clear();
+		try {
+			Statement state = connection.createStatement();
+			ResultSet rs = state.executeQuery(sql_order);
+			while (rs.next()) {
+				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"), rs.getString("book_author"),
+						rs.getString("year_of_publication"), rs.getString("publisher"), rs.getString("image_url_l")));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			System.out.println("Cannot execute sql order at load products method");
+			// e.printStackTrace();
+
+		}
+	}
+	
 	public static void getPopularBooks(ObservableList<BookModel> populerbooks) {
-		String isbn[] = new String[10];
+		String isbn[] = new String[1000];
 		populerbooks.clear();
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY COUNT(isbn) DESC LIMIT 10");
+					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY COUNT(isbn) DESC LIMIT 1000");
 			ResultSet rs = stmt.executeQuery();
+			int index = 0;
 			while (rs.next()) {
-				for (int i = 0; i < isbn.length; i++) {
-					isbn[i] = rs.getString("isbn");
-				}
+				isbn[index] = rs.getString("isbn");
+				index++;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(isbn.length);
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("SELECT * FROM `bx_books` WHERE 'isbn'");
-			ResultSet rs2 = stmt2.executeQuery();
-			while (rs2.next()) {
-				for (int i = 0; i < isbn.length; i++) {
-					if (isbn[i] == rs2.getString("isbn")) {
-						populerbooks.add(new BookModel(rs2.getString("isbn"), rs2.getString("book_title"),
-								rs2.getString("book_author"), rs2.getString("year_of_publication"),
-								rs2.getString("publisher"), rs2.getString("image_url_s")));
-					}
-
-				}
+			for(int i =0; i<isbn.length; i++) {
+				PreparedStatement stmt2 = connection.prepareStatement("SELECT * FROM bx_books WHERE isbn = ?");
+				stmt2.setString(1, isbn[i]);
+				ResultSet rs2 = stmt2.executeQuery();
+				while (rs2.next()) {
+					populerbooks.add(new BookModel(rs2.getString("isbn"), rs2.getString("book_title"),
+					rs2.getString("book_author"), rs2.getString("year_of_publication"),
+					rs2.getString("publisher"), rs2.getString("image_url_l")));
+				}	
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -177,8 +228,8 @@ public class Database {
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY AVG(book_rating) DESC LIMIT 10");
 			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				for (int i = 0; i < isbn.length; i++) {
+			for (int i = 0; i < isbn.length; i++) {
+				while (rs.next()) {
 					isbn[i] = rs.getString("isbn");
 				}
 			}
@@ -186,16 +237,14 @@ public class Database {
 			e.printStackTrace();
 		}
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("SELECT * FROM `bx_books` WHERE 'isbn'");
-			ResultSet rs2 = stmt2.executeQuery();
-			while (rs2.next()) {
-				for (int i = 0; i < isbn.length; i++) {
-					if (isbn[i] == rs2.getString("isbn")) {
-						books.add(new BookModel(rs2.getString("isbn"), rs2.getString("book_title"),
-								rs2.getString("book_author"), rs2.getString("year_of_publication"),
-								rs2.getString("publisher"), rs2.getString("image_url_s")));
-					}
-
+			for (int i = 0; i < isbn.length; i++) {
+				PreparedStatement stmt2 = connection.prepareStatement("SELECT * FROM bx_books WHERE isbn = ?");
+				stmt2.setString(1, isbn[i]);
+				ResultSet rs2 = stmt2.executeQuery();
+				while (rs2.next()) {
+					books.add(new BookModel(rs2.getString("isbn"), rs2.getString("book_title"),
+							rs2.getString("book_author"), rs2.getString("year_of_publication"),
+							rs2.getString("publisher"), rs2.getString("image_url_l")));
 				}
 			}
 		} catch (SQLException e) {
@@ -218,7 +267,7 @@ public class Database {
 			stmt.setString(7, book.getImageLink_m());
 			stmt.setString(8, book.getImage_l());
 			stmt.executeUpdate();
-
+			return 1;
 			// kullan�c�n�n idsini
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -261,8 +310,6 @@ public class Database {
 	
 
 	public static void VoteBook(String userID, String isbn, String rate) {
-		// TODO Auto-generated method stub
-		
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
 					"INSERT INTO bx_book_ratings (user_id, isbn, book_rating)" + " VALUES ( ? , ? , ? )");
