@@ -3,18 +3,13 @@ package controller;
 import static controller.YazLab1.window;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 import model.UserRegisterModel;
 
 public class RegisterController {
@@ -27,7 +22,7 @@ public class RegisterController {
 	public void registerAction() {
 		if( username.getText().equals("") || password.getText().equals("") 
 				|| address.getText().equals("") || age.getText().equals("") ) {
-			new ErrorMessage("Bütün Alanlarin Doldurulmasi Gerekmektedir");
+			new ErrorMessage("Butun Alanlarin Doldurulmasi Gerekmektedir");
 			return;
 		}
 		
