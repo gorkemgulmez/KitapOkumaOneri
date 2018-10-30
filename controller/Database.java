@@ -131,7 +131,7 @@ public class Database {
 			stmt.setString(2,user.getPassword());
 			stmt.setString(3,user.getAdress());
 			stmt.setString(4,user.getAge());
-			stmt.executeUpdate();
+    			stmt.executeUpdate();
 	
 			//kullan�c�n�n idsini
 		}
@@ -207,7 +207,6 @@ public class Database {
                         stmt.setString(7,book.getImageLink_m());
                         stmt.setString(8,book.getImage_l());
 			stmt.executeUpdate();
-	
 			//kullan�c�n�n idsini
 		}
 		catch(SQLException e) {
@@ -217,7 +216,6 @@ public class Database {
 		return -1;
 	}
                 
-	
 	public static void deleteBook(String isbn) {
             String Sql= "DELETE From bx_books WHERE isbn = ? ";
             try{
@@ -247,20 +245,38 @@ public class Database {
 	public static void VoteBook(int userID, String isbn, int rate) {
 		// TODO Auto-generated method stub
                 try{
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_book_ratings (user_id,isbn,book_rating)" + " VALUES ( ? , ? , ? )");
-			stmt.setInt(1,userID);
-			stmt.setString(2,isbn);
-			stmt.setInt(3,rate);
-			stmt.executeUpdate();
+                    PreparedStatement stmt = connection.prepareStatement("INSERT INTO bx_book_ratings (user_id,isbn,book_rating)" + " VALUES ( ? , ? , ? )");
+                    stmt.setInt(1,userID);
+                    stmt.setString(2,isbn);
+                    stmt.setInt(3,rate);
+                    stmt.executeUpdate();
 			//kullan�c�n�n idsini
-              		//oylamay� kaydet
+              		//oylamay� kaydet  
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
                 }
         }
-        public static void UpdateVoteBook(int rate){
-             //Aşağıdaki kod satiri başka bir fonksiyona atilacak 
+        public static boolean UpdateVoteBook(int userID,String isbn,int rate){
+             //Aşağıdaki kod satiri başka bir fonksiyona atilacak
+                try {
+                    PreparedStatement stmt2 = connection.prepareStatement("SELECT user_id,isbn,book_rating FROM bx_book_ratings WHERE user_id = ? , isbn = ? , book_rating = ? ");   
+                    stmt2.setInt(1,userID);
+                    stmt2.setString(2,isbn);
+                    stmt2.setInt(3,rate);
+                    ResultSet rs = stmt2.executeQuery();
+                    while(rs.next()) {
+                      int Data_user=rs.getInt("user_id");
+                      String Data_isbn=rs.getString("isbn");
+                      int Data_book_rating=rs.getInt("book_rating");
+                        if(Data_user == userID && Data_isbn == isbn && Data_book_rating == rate) {
+                            return false;
+                        }
+                    }
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
                 try{
                     PreparedStatement stmt2 = connection.prepareStatement("UPDATE bx_book_ratings SET book_rating = ? ");
                     stmt2.setInt(1, rate);
@@ -270,6 +286,7 @@ public class Database {
                     e.printStackTrace();
                 }
 		//ama kullan�c� bu kitab� oylam���a �nceki veriyi sil
+                return true;
         }
 
 	public static int getUserId(String username) {
