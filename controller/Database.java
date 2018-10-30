@@ -14,7 +14,6 @@ import model.UserRegisterModel;
 public class Database {
 
 	private static Connection connection;
-
 	// Database Methods
 	public static void setConnection() {
 		String url, username, password;
@@ -169,15 +168,16 @@ public class Database {
 	}
 	
 	public static void getBooks(ObservableList<BookModel> books, int pageIndex, int limit) {
-		int end = pageIndex * limit;
+		int end = (pageIndex+1) * limit;
 		int start = end - limit + 1;
 		//sql_order i degistir
-		String sql_order = "SELECT * FROM bx_books LIMIT " + limit; // startla end arasındaki getir
+		String sql_order = "SELECT * FROM `bx_books` LIMIT "+ start +","+ limit +" "; // startla end arasındaki getir
+                System.out.println(sql_order);
 		books.clear();
 		try {
 			Statement state = connection.createStatement();
-			ResultSet rs = state.executeQuery(sql_order);
-			while (rs.next()) {
+			ResultSet rs = state.executeQuery(sql_order);                      
+			while (rs.next()) {          
 				books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"), rs.getString("book_author"),
 						rs.getString("year_of_publication"), rs.getString("publisher"), rs.getString("image_url_l")));
 			}
@@ -185,7 +185,6 @@ public class Database {
 		} catch (SQLException e) {
 			System.out.println("Cannot execute sql order at load products method");
 			// e.printStackTrace();
-
 		}
 	}
 	
