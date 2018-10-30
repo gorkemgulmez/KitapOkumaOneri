@@ -10,6 +10,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -18,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,6 +33,8 @@ import model.BookModel;
 public class MainWindowController {
 
 	@FXML private Pagination pagination;
+	@FXML private Tab bestTab;
+	@FXML private Tab popTab;
 	
 	@FXML private TableView<BookModel> bookTable;
 	@FXML private TableColumn<BookModel, String> isbnC;
@@ -83,7 +88,7 @@ public class MainWindowController {
 	private Node createPage(int pageIndex) {
 		from = pageIndex * rowsPerPage;
 		to = Math.min(from + rowsPerPage, books.size());
-
+		System.out.println("to: " + to);
 		Database.getBooks(books, pageIndex, rowsPerPage);
 		bookTable.setItems(books);
 		return bookTable;
@@ -121,12 +126,6 @@ public class MainWindowController {
 		
 		
 		Platform.runLater(() -> {
-			//Database.getPopularBooks(booksPopular);
-			//bookTablePopular.setItems(booksPopular);
-			
-			//Database.getBestBooks(booksBest);
-			//bookTableBest.setItems(booksBest);
-			
 			///Table Listeners
 			bookTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookModel>() {
 				@Override
@@ -151,9 +150,30 @@ public class MainWindowController {
 				}
 				
 			});
-
+			
+			bestTab.setOnSelectionChanged(new EventHandler<Event>() {
+				
+				@Override
+				public void handle(Event arg0) {
+					if(booksBest.isEmpty()) {
+						Database.getBestBooks(booksBest);
+						bookTableBest.setItems(booksBest);
+					}
+				}
+			});
+			
+			popTab.setOnSelectionChanged(new EventHandler<Event>() {
+				
+				@Override
+				public void handle(Event arg0) {
+					if(booksPopular.isEmpty()) {
+						Database.getPopularBooks(booksPopular);
+						bookTablePopular.setItems(booksPopular);
+					}
+				}
+			});
+			
 		});
-		
 	}
 	
 	public void setSelectedItemsProp(TableView<BookModel> t) {
