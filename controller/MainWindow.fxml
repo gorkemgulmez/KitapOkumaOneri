@@ -38,7 +38,7 @@
                </content>
             </Tab>
             
-            <Tab text="En İyiler">
+            <Tab fx:id="bestTab" text="En İyiler">
                <content>
                   <TableView fx:id="bookTableBest" prefHeight="456.0" prefWidth="680.0">
                     <columns>
@@ -51,7 +51,7 @@
                   </TableView>
                </content></Tab>
           
-          <Tab text="Popülerler">
+          <Tab fx:id="popTab" text="Popülerler">
                <content>
                   <TableView fx:id="bookTablePopular" prefHeight="200.0" prefWidth="200.0">
                     <columns>

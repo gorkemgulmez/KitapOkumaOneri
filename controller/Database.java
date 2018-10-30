@@ -100,7 +100,7 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		// id si verilen kullan�c�y� sil
+		// id si verilen kullanici sil
 	}
 	
 	public static int getUserId(String username) {
@@ -122,8 +122,9 @@ public class Database {
 		try {
 			Statement state = connection.createStatement();
 			ResultSet rs = state.executeQuery(sql_order);
-			while(rs.next())
-				return rs.getInt(1);
+			rs.first();
+			return rs.getInt(1);
+				
 		} catch(SQLException e) {
 			System.out.println("Cannot get nums of books");
 			e.printStackTrace();
