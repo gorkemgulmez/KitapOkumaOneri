@@ -226,34 +226,20 @@ public class Database {
 	}
 
 	public static void getBestBooks(ObservableList<BookModel> books) {
-		String isbn[] = new String[1000];
 		books.clear();
-		try {
-			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY AVG(book_rating) DESC LIMIT 1000");
-			ResultSet rs = stmt.executeQuery();
-			for (int i = 0; i < isbn.length; i++) {
-				while (rs.next()) {
-					isbn[i] = rs.getString("isbn");
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		try {
-			for (int i = 0; i < isbn.length; i++) {
-				PreparedStatement stmt2 = connection.prepareStatement("SELECT * FROM bx_books WHERE isbn = ?");
-				stmt2.setString(1, isbn[i]);
-				ResultSet rs2 = stmt2.executeQuery();
-				while (rs2.next()) {
-					books.add(new BookModel(rs2.getString("isbn"), rs2.getString("book_title"),
-							rs2.getString("book_author"), rs2.getString("year_of_publication"),
-							rs2.getString("publisher"), rs2.getString("image_url_l")));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT * FROM bx_books WHERE isbn IN (SELECT isbn FROM bx_book_ratings GROUP BY isbn ORDER BY AVG(book_rating) DESC ) LIMIT 10");
+            ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"),
+                            rs.getString("book_author"), rs.getString("year_of_publication"),
+                            rs.getString("publisher"), rs.getString("image_url_l")));
+                }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 
 	public static int createBook(BookRegisterModel book) {
