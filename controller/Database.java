@@ -154,6 +154,24 @@ public class Database {
 		}
 	}
 
+	public static BookModel getBooks(String isbn) {
+		String sql_order = "SELECT * FROM `bx_books` WHERE isbn = ?";
+		try {
+			PreparedStatement state = connection.prepareStatement(sql_order);
+			state.setString(1, isbn);
+			ResultSet rs = state.executeQuery();
+			rs.first();
+			BookModel bm = new BookModel(rs.getString("isbn"), rs.getString("book_title"), rs.getString("book_author"),
+					rs.getString("year_of_publication"), rs.getString("publisher"), rs.getString("image_url_l"));
+			return bm;
+			
+		} catch (SQLException e) {
+			System.out.println("Cannot execute sql order at load products method");
+			// e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static void getBooks(ObservableList<BookModel> books, int limit) {
 		String sql_order = "SELECT * FROM bx_books LIMIT " + limit;
 		books.clear();
@@ -374,18 +392,12 @@ public class Database {
 				BookRateModel value = new BookRateModel(rs.getString("isbn"), rs.getInt("book_rating"));
 				addtoList(users, key, value);
 			}
-			//System.out.println(users.size());
-			//System.out.println(users.values());
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
 		System.out.println("Success getMapData");
 		System.out.println(users.size());
-		System.out.println(bookList.size());
-		System.out.println("G�rkem");
-		for(int i =0; i<users.get(278859).size(); i++) {
-			System.out.println(users.get(278859).get(i));
-		}
+		
 	}
 	
 	private static void addtoList(HashMap<Integer, ArrayList<BookRateModel>> users, int key, BookRateModel value) {
@@ -403,15 +415,3 @@ public class Database {
 
 }
 
-/*
- * 1) Kullan�c�y� se�(�u anki kullan�c� )
- * di�er kullanc�larla kar��la�t�r
- * 1) kullan�c� en az 10 kitap oylam�� olacak
- * 2) di�er b�t�n en az 10 kitap oylam�� olacak
- * for() {
- * en yak�n = 300
- * 301 yeni yak�nsa en yakin = 301
- * }
- * en yak�n belirlendi
- * en yak�n��n oylad��� kitab� ya da kitaplar�n� getir
- */

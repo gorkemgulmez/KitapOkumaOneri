@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import model.BookModel;
 import model.BookRateModel;
 
 public class UBCF {
@@ -33,7 +34,7 @@ public class UBCF {
 	}
 	
 	public static double calculate(int id) {
-		//user_id -> id kars�last�r
+		//user_id -> id karsilastir
 		/// up	  / down
 		/// d1.d2 / ||d1|| * ||d2||
 		int up = 0, down = 0;
@@ -57,16 +58,16 @@ public class UBCF {
 		for(int i = 0; i<list2.size(); i++) temp += Math.pow(list2.get(i).getRate(), 2);
 		down = down * temp;
 		
-		System.out.println("Up: " + up + " Down: " + down );
-		System.out.println("Up/down: " + up / (double) down);
+		//System.out.println("Up: " + up + " Down: " + down );
+		//System.out.println("Up/down: " + up / (double) down);
 		
 		if(down == 0) return 0;
 		return up/ (double) down;
 	}
 
-	public static void rating() {
+	public static BookModel[] rating() {
 		System.out.println("start");
-		user_id = 278859;
+		System.out.println("User id: " + user_id);
 		
 		set = users.entrySet();
 		iterate = set.iterator();
@@ -81,7 +82,7 @@ public class UBCF {
 			if(users.get(me.getKey()).size() < 10 || user_id == me.getKey())
 				continue;
 			
-			//artt�kca yak�nl�k artar
+			//arttikca yakinlik artar
 			if(calculate(me.getKey()) > yakinlik ) {
 				yakinlik = calculate(me.getKey());
 				enYakin = me.getKey();
@@ -90,19 +91,29 @@ public class UBCF {
 		}
 		
 		//kullaniciya gore kitap dondur
-		System.out.println("kitaplar");
+		/*System.out.println("kitaplar");
 		for(int i=0; i<users.get(enYakin).size(); i++) {
 			System.out.println(users.get(enYakin).get(i).getIsbn());
+		}*/
+		
+		BookModel[] books = new BookModel[3];
+		String[] isbn = new String[15];
+		for(int i=0; i<15; i++) {
+			isbn[i] = users.get(enYakin).get(i).getIsbn();
 		}
 		
-		
-		/*
-			if(me.getKey() == 278859) {
-				System.out.print(me.getKey() + ": ");
-				System.out.println(me.getValue());	
+		int count =0;
+		for(int i =0; i<books.length; i++) {
+			for(int j =count+1; j<isbn.length; j++) {
+				if(Database.getBooks(isbn[j]) != null) {
+					books [i] = Database.getBooks(isbn[j]);
+					count = j;
+					break;
+				}
 			}
 			
-		}*/
+		}
+		return books;
 	}
 	
 }

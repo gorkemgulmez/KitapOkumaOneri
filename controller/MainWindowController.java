@@ -81,9 +81,9 @@ public class MainWindowController {
 	private boolean popularDatabaseFlag = false;
 	private boolean bestDatabaseFlag = false;
 	
-	protected void setUserID(int id) {
-		this.userID = id;
-		System.out.println(this.userID);
+	public void setUserID(int id) {
+		userID = id;
+		System.out.println("(Main)userid: " + userID);
 	}
 	
 	private Node createPage(int pageIndex) {
@@ -213,7 +213,6 @@ public class MainWindowController {
 		}
 		
 
-        
         int remainingBook = Database.userVotedBook(userID);
 		if(remainingBook < 10 && userID!=1) {
 			
@@ -328,7 +327,28 @@ public class MainWindowController {
 	}
 	
 	public void getSuggestion() {
-		UBCF.rating();
+		UBCF.setUser_id(userID);
+		BookModel[] books = UBCF.rating();
+		
+		Parent root;
+		Stage window = new Stage();
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("SuggestionWindow.fxml"));
+		
+		SuggestionController.books = books;
+		
+		try {
+			loader.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		root = loader.getRoot();
+		Scene scene = new Scene(root);
+		
+		window.setScene(scene);
+		window.setTitle("Oneriler");
+		window.show();
 	}
 	
 }

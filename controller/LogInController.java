@@ -31,6 +31,8 @@ public class LogInController {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("MainWindow.fxml"));
+			
+			
 			loader.load();
 			root = loader.getRoot();
 			
