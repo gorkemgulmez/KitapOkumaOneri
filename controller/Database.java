@@ -227,6 +227,7 @@ public class Database {
 
 	public static void getBestBooks(ObservableList<BookModel> books) {
 		books.clear();
+
         try {
             PreparedStatement stmt = connection.prepareStatement(
                     "SELECT * FROM bx_books WHERE isbn IN (SELECT isbn FROM bx_book_ratings GROUP BY isbn ORDER BY AVG(book_rating) DESC ) LIMIT 10");
@@ -240,8 +241,7 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-	}
-
+        }
 	public static int createBook(BookRegisterModel book) {
 		// insert et
 		try {
@@ -359,21 +359,59 @@ public class Database {
 		// ama kullan�c� ebu kitab� oylam���a �nceki veriyi sil
 	}
 	
-	public static void getMapData(HashMap<Integer, ArrayList<BookRateModel>> users) {
+	public static void getMapData(HashMap<Integer, ArrayList<BookRateModel>> users, HashMap<String, Integer> bookList) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT user_id, book_rating FROM bx_book_ratings WHERE user_id IN (SELECT user_id u FROM bx_users) ");
+			/*PreparedStatement bookS = connection.prepareStatement("SELECT * FROM bx_books");
+			ResultSet bs = bookS.executeQuery();
+			while(bs.next()) {
+				bookList.put(bs.getString("isbn"), bs.getInt("book_id"));
+			}*/
+			
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM bx_book_ratings");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				int key = rs.getInt("user_id");
-				//BookRateModel value = new BookRateModel(rs.getString("isbn"), rs.getInt("book_rating"));
-				//System.out.println(users.get(key));
-				//users.put(user_id, users.get(user_id).add(model));
+				BookRateModel value = new BookRateModel(rs.getString("isbn"), rs.getInt("book_rating"));
+				addtoList(users, key, value);
 			}
 			//System.out.println(users.size());
 			//System.out.println(users.values());
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Success getMapData");
+		System.out.println(users.size());
+		System.out.println(bookList.size());
+		System.out.println("G�rkem");
+		for(int i =0; i<users.get(278859).size(); i++) {
+			System.out.println(users.get(278859).get(i));
+		}
+	}
+	
+	private static void addtoList(HashMap<Integer, ArrayList<BookRateModel>> users, int key, BookRateModel value) {
+		if(users.get(key) == null) {
+			ArrayList<BookRateModel> list = new ArrayList<>();
+			list.add(value);
+			users.put(key, list);
+		}
+		else {
+			ArrayList<BookRateModel> list = users.get(key);
+			list.add(value);
+			users.put(key, list);
+		}
 	}
 
 }
+
+/*
+ * 1) Kullan�c�y� se�(�u anki kullan�c� )
+ * di�er kullanc�larla kar��la�t�r
+ * 1) kullan�c� en az 10 kitap oylam�� olacak
+ * 2) di�er b�t�n en az 10 kitap oylam�� olacak
+ * for() {
+ * en yak�n = 300
+ * 301 yeni yak�nsa en yakin = 301
+ * }
+ * en yak�n belirlendi
+ * en yak�n��n oylad��� kitab� ya da kitaplar�n� getir
+ */

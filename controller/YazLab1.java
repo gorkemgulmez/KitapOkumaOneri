@@ -37,7 +37,7 @@ public class YazLab1 extends Application {
 			
 			@Override
 			public void run() {
-				UBCF.setMap();
+				UBCF.getMapData();
 			}
 		}).start();
 		

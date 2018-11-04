@@ -218,6 +218,7 @@ public class MainWindowController {
 		if(remainingBook < 10 && userID!=1) {
 			
 			remainingText.setText("Kalan Kitap: " + (10-remainingBook));
+			suggestButton.setVisible(false);
 		}
 		
 		if(userID == 1) {
