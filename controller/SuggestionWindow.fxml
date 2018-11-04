@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="322.0" prefWidth="761.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SuggestionController">
+   <children>
+      <Label fx:id="text1" layoutX="93.0" layoutY="77.0" text="Öneri 1" />
+      <ImageView fx:id="imgview1" fitHeight="150.0" fitWidth="200.0" layoutX="55.0" layoutY="114.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="text2" layoutX="304.0" layoutY="77.0" text="Öneri 2" />
+      <ImageView fx:id="imgview2" fitHeight="150.0" fitWidth="200.0" layoutX="274.0" layoutY="114.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="text3" layoutX="548.0" layoutY="77.0" text="Öneri 3" />
+      <ImageView fx:id="imgview3" fitHeight="150.0" fitWidth="200.0" layoutX="515.0" layoutY="114.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</AnchorPane>
