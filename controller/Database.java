@@ -226,34 +226,21 @@ public class Database {
 	}
 
 	public static void getBestBooks(ObservableList<BookModel> books) {
-		String isbn[] = new String[1000];
 		books.clear();
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY AVG(book_rating) DESC LIMIT 1000");
+					"SELECT * FROM bx_books WHERE isbn IN (SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY AVG(book_rating) DESC ) LIMIT 10");
 			ResultSet rs = stmt.executeQuery();
-			for (int i = 0; i < isbn.length; i++) {
 				while (rs.next()) {
-					isbn[i] = rs.getString("isbn");
+					books.add(new BookModel(rs.getString("isbn"), rs.getString("book_title"),
+							rs.getString("book_author"), rs.getString("year_of_publication"),
+							rs.getString("publisher"), rs.getString("image_url_l")));
 				}
-			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		try {
-			for (int i = 0; i < isbn.length; i++) {
-				PreparedStatement stmt2 = connection.prepareStatement("SELECT * FROM bx_books WHERE isbn = ?");
-				stmt2.setString(1, isbn[i]);
-				ResultSet rs2 = stmt2.executeQuery();
-				while (rs2.next()) {
-					books.add(new BookModel(rs2.getString("isbn"), rs2.getString("book_title"),
-							rs2.getString("book_author"), rs2.getString("year_of_publication"),
-							rs2.getString("publisher"), rs2.getString("image_url_l")));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	public static int createBook(BookRegisterModel book) {
@@ -373,21 +360,59 @@ public class Database {
 		// ama kullanï¿½cï¿½ ebu kitabï¿½ oylamï¿½ï¿½ï¿½a ï¿½nceki veriyi sil
 	}
 	
-	public static void getMapData(HashMap<Integer, ArrayList<BookRateModel>> users) {
+	public static void getMapData(HashMap<Integer, ArrayList<BookRateModel>> users, HashMap<String, Integer> bookList) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT user_id, book_rating FROM bx_book_ratings WHERE user_id IN (SELECT user_id u FROM bx_users) ");
+			/*PreparedStatement bookS = connection.prepareStatement("SELECT * FROM bx_books");
+			ResultSet bs = bookS.executeQuery();
+			while(bs.next()) {
+				bookList.put(bs.getString("isbn"), bs.getInt("book_id"));
+			}*/
+			
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM bx_book_ratings");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				int key = rs.getInt("user_id");
-				//BookRateModel value = new BookRateModel(rs.getString("isbn"), rs.getInt("book_rating"));
-				//System.out.println(users.get(key));
-				//users.put(user_id, users.get(user_id).add(model));
+				BookRateModel value = new BookRateModel(rs.getString("isbn"), rs.getInt("book_rating"));
+				addtoList(users, key, value);
 			}
 			//System.out.println(users.size());
 			//System.out.println(users.values());
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Success getMapData");
+		System.out.println(users.size());
+		System.out.println(bookList.size());
+		System.out.println("Görkem");
+		for(int i =0; i<users.get(278859).size(); i++) {
+			System.out.println(users.get(278859).get(i));
+		}
+	}
+	
+	private static void addtoList(HashMap<Integer, ArrayList<BookRateModel>> users, int key, BookRateModel value) {
+		if(users.get(key) == null) {
+			ArrayList<BookRateModel> list = new ArrayList<>();
+			list.add(value);
+			users.put(key, list);
+		}
+		else {
+			ArrayList<BookRateModel> list = users.get(key);
+			list.add(value);
+			users.put(key, list);
+		}
 	}
 
 }
+
+/*
+ * 1) Kullanýcýyý seç(þu anki kullanýcý )
+ * diðer kullancýlarla karþýlaþtýr
+ * 1) kullanýcý en az 10 kitap oylamýþ olacak
+ * 2) diðer bütün en az 10 kitap oylamýþ olacak
+ * for() {
+ * en yakýn = 300
+ * 301 yeni yakýnsa en yakin = 301
+ * }
+ * en yakýn belirlendi
+ * en yakýnýýn oyladýðý kitabý ya da kitaplarýný getir
+ */

@@ -2,19 +2,20 @@ package model;
 
 public class BookRateModel {
 
-	private int id, rate;
+	private String isbn;
+	private int rate;
 	
-	public BookRateModel(int id, int rate) {
-		this.id = id;
+	public BookRateModel(String isbn, int rate) {
+		this.isbn = isbn;
 		this.rate = rate;
 	}
 
-	public int getId() {
-		return id;
+	public String getIsbn() {
+		return isbn;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
 	}
 
 	public int getRate() {
