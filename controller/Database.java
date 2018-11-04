@@ -6,8 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javafx.collections.ObservableList;
 import model.BookModel;
+import model.BookRateModel;
 import model.BookRegisterModel;
 import model.UserRegisterModel;
 
@@ -105,11 +109,11 @@ public class Database {
 	
 	public static int getUserId(String username) {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username= ? ");
+			PreparedStatement stmt = connection.prepareStatement("SELECT user_id FROM bx_users WHERE username= ? LIMIT 1");
 			stmt.setString(1, username);
 			ResultSet user = stmt.executeQuery();
-			while (user.next())
-				return (user.getInt("user_id"));
+			user.first();
+			return (user.getInt("user_id"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -190,11 +194,11 @@ public class Database {
 	}
 	
 	public static void getPopularBooks(ObservableList<BookModel> populerbooks) {
-		String isbn[] = new String[1000];
+		String isbn[] = new String[11];
 		populerbooks.clear();
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY COUNT(isbn) DESC LIMIT 1000");
+					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY COUNT(isbn) DESC LIMIT 11");
 			ResultSet rs = stmt.executeQuery();
 			int index = 0;
 			while (rs.next()) {
@@ -222,11 +226,11 @@ public class Database {
 	}
 
 	public static void getBestBooks(ObservableList<BookModel> books) {
-		String isbn[] = new String[10];
+		String isbn[] = new String[1000];
 		books.clear();
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY AVG(book_rating) DESC LIMIT 10");
+					"SELECT isbn FROM `bx_book_ratings` GROUP BY isbn ORDER BY AVG(book_rating) DESC LIMIT 1000");
 			ResultSet rs = stmt.executeQuery();
 			for (int i = 0; i < isbn.length; i++) {
 				while (rs.next()) {
@@ -268,7 +272,7 @@ public class Database {
 			stmt.setString(8, book.getImage_l());
 			stmt.executeUpdate();
 			return 1;
-			// kullan�c�n�n idsini
+			// kullanicinin idsini
 		} catch (SQLException e) {
 			e.printStackTrace();
 
@@ -281,12 +285,12 @@ public class Database {
 	public static int userVotedBook(int userId) {
 		try {
 			PreparedStatement stmt = connection
-					.prepareStatement("Select book_number FROM bx_users WHERE user_id='" + userId + "'");
+					.prepareStatement("Select book_number FROM bx_users WHERE user_id= ? ");
+			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				int book_number = rs.getInt("book_number");
-				return book_number;
-			}
+			rs.first();
+			int book_number = rs.getInt("book_number");
+			return book_number;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -309,41 +313,81 @@ public class Database {
 	}
 
 
-	public static void VoteBook(String userID, String isbn, String rate) {
+	public static void VoteBook(int userID, String isbn, int rate) {
 		try {
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM bx_book_ratings WHERE user_id = ? and isbn = ?");
+			stmt.setInt(1, userID);
+			stmt.setString(2, isbn);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				System.out.println("update");
+				UpdateVoteBook(userID, isbn, rate);
+				return;	
+			}
+			
+		}catch (SQLException e) {
+			System.out.println("hata");
+			e.printStackTrace();
+		}
+		
+		try {
+			System.out.println("insert");
 			PreparedStatement stmt = connection.prepareStatement(
 					"INSERT INTO bx_book_ratings (user_id, isbn, book_rating)" + " VALUES ( ? , ? , ? )");
-			stmt.setString(1, userID);
+			stmt.setInt(1, userID);
 			stmt.setString(2, isbn);
-			stmt.setString(3, rate);
+			stmt.setInt(3, rate);
+			stmt.executeUpdate();
 			
 			PreparedStatement select = connection.prepareStatement("SELECT book_number FROM bx_users WHERE (user_id)=?" );
-			select.setInt(1, Integer.parseInt(userID));
+			select.setInt(1, userID);
 			ResultSet rs = select.executeQuery();
 			int bookNumber = 0 ;
 			while(rs.next()) {
 				bookNumber = rs.getInt("book_number");
 			}
+			
 			PreparedStatement upd = connection.prepareStatement("Update bx_users SET book_number=? WHERE user_id=?");
 			upd.setInt(1, bookNumber+1);
-			upd.setInt(2, Integer.parseInt(userID));
+			upd.setInt(2, userID);
 			stmt.executeUpdate();
 			upd.executeUpdate();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 	}
 
-	public static void UpdateVoteBook(int rate) {
+	public static void UpdateVoteBook(int user_id, String isbn, int rate) {
 		// Aşağıdaki kod satiri başka bir fonksiyona atilacak
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("UPDATE bx_book_ratings SET book_rating = ? ");
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE bx_book_ratings SET book_rating = ? WHERE user_id = ? and isbn = ? ");
 			stmt2.setInt(1, rate);
+			stmt2.setInt(2, user_id);
+			stmt2.setString(3, isbn);
 			stmt2.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		// ama kullan�c� bu kitab� oylam���a �nceki veriyi sil
+		// ama kullan�c� ebu kitab� oylam���a �nceki veriyi sil
+	}
+	
+	public static void getMapData(HashMap<Integer, ArrayList<BookRateModel>> users) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT user_id, book_rating FROM bx_book_ratings WHERE user_id IN (SELECT user_id u FROM bx_users) ");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				int key = rs.getInt("user_id");
+				//BookRateModel value = new BookRateModel(rs.getString("isbn"), rs.getInt("book_rating"));
+				//System.out.println(users.get(key));
+				//users.put(user_id, users.get(user_id).add(model));
+			}
+			//System.out.println(users.size());
+			//System.out.println(users.values());
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

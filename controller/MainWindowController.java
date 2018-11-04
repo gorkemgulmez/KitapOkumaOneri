@@ -28,6 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 import model.BookModel;
 
 public class MainWindowController {
@@ -64,26 +65,26 @@ public class MainWindowController {
 	@FXML private Button readButton;
 	@FXML private Button adminButton;
 	@FXML private Button voteButton;
+	@FXML private Button suggestButton;
 	@FXML private Text remainingText;
 	
 	private ObservableList<BookModel> books = FXCollections.observableArrayList();
 	private ObservableList<BookModel> booksPopular = FXCollections.observableArrayList();
 	private ObservableList<BookModel> booksBest = FXCollections.observableArrayList();
-	
 	private ObservableList<Integer> rateList = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10);
 	private ObservableList<String> adminList = FXCollections.observableArrayList("Ekle", "Sil", "Kullanici Ekle", "Kullanici Sil");
 	
 	private BookModel lastSelectedModel;
-	
 	private int userID;
+	private int numberOfBooks = Database.getNumberofBooks();
+	private int rowsPerPage = 17, from=0, to=0;
+	private boolean popularDatabaseFlag = false;
+	private boolean bestDatabaseFlag = false;
 	
 	protected void setUserID(int id) {
 		this.userID = id;
 		System.out.println(this.userID);
 	}
-	
-	private int numberOfBooks = Database.getNumberofBooks();
-	private int rowsPerPage = 17, from=0, to=0;
 	
 	private Node createPage(int pageIndex) {
 		from = pageIndex * rowsPerPage;
@@ -95,6 +96,8 @@ public class MainWindowController {
 	}
 	
 	@FXML public void initialize() {
+		UBCF.setUser_id(userID);
+		
 		pagination.setPageCount((numberOfBooks/rowsPerPage) + 1);
 		pagination.setPageFactory(this::createPage);
 		
@@ -123,7 +126,6 @@ public class MainWindowController {
 
 		adminBox.setVisible(false);
 		adminButton.setVisible(false);
-		
 		
 		Platform.runLater(() -> {
 			///Table Listeners
@@ -155,9 +157,18 @@ public class MainWindowController {
 				
 				@Override
 				public void handle(Event arg0) {
-					if(booksBest.isEmpty()) {
-						Database.getBestBooks(booksBest);
-						bookTableBest.setItems(booksBest);
+					if(booksBest.isEmpty() && bestDatabaseFlag == false) {
+						new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								bestDatabaseFlag = true;
+								System.out.println("Best thread started");
+								Database.getBestBooks(booksBest);
+								bookTableBest.setItems(booksBest);
+								System.out.println("Best thread end");
+							}
+						}).start();
 					}
 				}
 			});
@@ -166,13 +177,23 @@ public class MainWindowController {
 				
 				@Override
 				public void handle(Event arg0) {
-					if(booksPopular.isEmpty()) {
-						Database.getPopularBooks(booksPopular);
-						bookTablePopular.setItems(booksPopular);
+					if(booksPopular.isEmpty() && popularDatabaseFlag == false) {
+						new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								popularDatabaseFlag = true;
+								System.out.println("Popular thread started");
+								Database.getPopularBooks(booksPopular);
+								bookTablePopular.setItems(booksPopular);
+								System.out.println("Popular thread ended");
+							}
+						}).start();
 					}
 				}
 			});
 			
+			bookTable.getSelectionModel().selectFirst();
 		});
 	}
 	
@@ -180,11 +201,18 @@ public class MainWindowController {
 		BookModel model = t.getSelectionModel().getSelectedItem();
 		lastSelectedModel = model;
 		
-		bookNameT.setText(model.getName());
-		Image img = new Image(model.getImageLink());
-        imgView.setImage(img);
-        readButton.setDisable(false);
-        voteButton.setDisable(false);
+		try {
+			bookNameT.setText(model.getName());
+			Thread t1 = new Thread(setImage(model));
+			t1.start();
+	        
+			readButton.setDisable(false);
+	        voteButton.setDisable(false);
+		}catch (Exception e) {
+			System.out.println("null");
+		}
+		
+
         
         int remainingBook = Database.userVotedBook(userID);
 		if(remainingBook < 10 && userID!=1) {
@@ -197,6 +225,17 @@ public class MainWindowController {
 			adminButton.setVisible(true);
 			remainingText.setVisible(false);
 		}
+	}
+	
+	public Runnable setImage(BookModel model) {
+		return new Runnable() {
+			public void run() {
+				Image img = new Image(model.getImageLink());
+				if (img.getHeight() == 1.0) img = new Image("file:..\\..\\resource\\no-image.png"); 
+				imgView.setImage(img);
+			}
+		};
+		
 	}
 	
 	public void readPDF() {
@@ -213,9 +252,14 @@ public class MainWindowController {
 	
 	public void vote() {
 		int rate = rateBox.getSelectionModel().getSelectedIndex()+1;
-		Database.VoteBook(Integer.toString(userID), lastSelectedModel.getIsbn(), Integer.toString(rate));
+		Database.VoteBook(userID, lastSelectedModel.getIsbn(), rate);
 		int remainingBook = Database.userVotedBook(userID);
-		remainingText.setText("Kalan Kitap: " + (10-remainingBook));
+		if(remainingBook < 10) 
+			remainingText.setText("Kalan Kitap: " + (10-remainingBook));
+		else {
+			remainingText.setVisible(false);
+			suggestButton.setVisible(true);
+		}
 	}
 	
 	public void handleAdminButton() {
@@ -280,6 +324,10 @@ public class MainWindowController {
 			window.setTitle("Kullanici Sil");
 			window.show();
 		}
+	}
+	
+	public void getSuggestion() {
+		UBCF.rating();
 	}
 	
 }

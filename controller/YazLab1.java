@@ -25,13 +25,22 @@ public class YazLab1 extends Application {
 			e.printStackTrace();
 		}
         
-        stage.setTitle("Giriş");
+        stage.setTitle("Giris");
         stage.show();
     }
 
    
     public static void main(String[] args) {
     	Database.setConnection();
+    	
+    	new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				UBCF.setMap();
+			}
+		}).start();
+		
     	launch(args);
     }
     
